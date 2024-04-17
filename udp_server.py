@@ -12,7 +12,7 @@ def handle_registration(client_address, message):
 
 def handle_message(client_address, message, server_socket):
     parts = message[5:].split(':', 1)
-    print(parts)
+    #print(parts)
     if len(parts) != 2:
         return "Invalid message format. Use '<recipient>:<message>'."
     
@@ -27,7 +27,7 @@ def handle_message(client_address, message, server_socket):
 
 def handle_message_all(client_address, message, server_socket):
     parts = message[8:].split(':', 1)
-    print(parts)
+    #print(parts)
     if len(parts) != 1:
         return "Invalid message format. Use '<message>'."
     
@@ -42,7 +42,7 @@ def get_nickname(client_socket):
     for nickname, socket in clients.items():
         if socket == client_socket:
             return nickname
-    return "Desconhecido"
+    return "Unknown"
 
 
 def main():
@@ -53,6 +53,7 @@ def main():
     while True:
         data, client_address = server_socket.recvfrom(2048)
         message = data.decode()
+        print(f"{get_nickname(client_address)}:", message)
         
         response = None
         if message.startswith("/REG"):

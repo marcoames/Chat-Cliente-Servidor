@@ -55,7 +55,7 @@ def main():
         command = input("Enter: ").strip()
 
         if command.startswith('/REG'):
-            register_user(client_socket, command[5:])  # Exclude '/REG ' from the message
+            register_user(client_socket, command[5:])  # Exclude '/REG' from the message
         elif command.startswith('/MSGALL'):
             message = command[8:].strip() # Exclude '/MSGALL' from message
             send_to_all(client_socket, message)
@@ -68,7 +68,7 @@ def main():
             recipient, message = parts[0], parts[1]
             send_message(client_socket, recipient, message)
         elif command.startswith('/FILE'):
-            parts = command[6:].split(':',1) #Exclude '/MSG' from message
+            parts = command[6:].split(':',1) #Exclude '/FILE' from message
             recipient = parts[0]
             file_path = parts[1]
             try:

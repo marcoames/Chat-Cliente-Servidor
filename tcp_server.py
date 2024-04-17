@@ -10,7 +10,7 @@ def handle_client(client_socket, client_address):
     try:
         while True:
             message = client_socket.recv(2048).decode()
-            print(message)
+            print(f"{get_nickname(client_socket)}:", message)
             if not message:
                 print(f"Connection with {client_address} closed.")
                 break
@@ -31,13 +31,13 @@ def handle_client(client_socket, client_address):
 def handle_registration(client_socket, message):
     nickname = message.split()[1]
     clients[nickname] = client_socket
-    print(f"Novo usuário registrado: {nickname}")
+    print(f"New user registered: {nickname}")
 
-def handle_message(sender_socket, message):
+def handle_message(client_socket, message):
     parts = message[5:].split(':',1)
-    print(parts)
+    #print(parts)
     if len(parts) != 2:
-        sender_socket.send("Formato de mensagem inválido. Use '<destinatário>:<mensagem>'.".encode())
+        client_socket.send("Invalid message format. Use '<destinatário>:<mensagem>'.".encode())
         return
     
     recipient = parts[0]
@@ -45,15 +45,15 @@ def handle_message(sender_socket, message):
     
     if recipient in clients:
         recipient_socket = clients[recipient]
-        recipient_socket.send(f"{get_nickname(sender_socket)}:{content}".encode())
+        recipient_socket.send(f"{get_nickname(client_socket)}:{content}".encode())
     else:
-        sender_socket.send("Usuário não encontrado.".encode())
+        client_socket.send("User not found.".encode())
 
 def handle_message_all(sender_socket, message):
     parts = message[8:].split(':',1)
-    print(parts)
+    #print(parts)
     if len(parts) != 1:
-        sender_socket.send("Formato de mensagem inválido. Use '<mensagem>'.".encode())
+        sender_socket.send("Invalid message format. Use '<mensagem>'.".encode())
         return
     
     content = parts[0]
@@ -65,7 +65,7 @@ def get_nickname(client_socket):
     for nickname, socket in clients.items():
         if socket == client_socket:
             return nickname
-    return "Desconhecido"
+    return "Unknown"
 
 def main():
     server_socket = socket(AF_INET,SOCK_STREAM)
@@ -75,7 +75,7 @@ def main():
 
     while True:
         client_socket, client_address = server_socket.accept()
-        print(f"Nova conexão de {client_address}")
+        print(f"New connection from {client_address}")
         
         client_thread = threading.Thread(target=handle_client, args=(client_socket, client_address))
         client_thread.start()
